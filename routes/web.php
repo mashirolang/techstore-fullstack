@@ -3,6 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
+Route::get('/{any?}', function () {
     return Inertia::render('welcome');
-})->name('home');
+})->where('any', '.*');
