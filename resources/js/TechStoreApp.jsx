@@ -14,6 +14,7 @@ import AdminLayout from "./pages/Admin/AdminLayout";
 import Dashboard from "./pages/Admin/Dashboard";
 import ProductList from "./pages/Admin/ProductList";
 import ProductForm from "./pages/Admin/ProductForm";
+import Orders from "./pages/Admin/Orders";
 import Login from "./pages/Auth/Login";
 import Signup from "./pages/Auth/Signup";
 
@@ -41,6 +42,7 @@ const App = () => (
               <Route path="products" element={<ProductList />} />
               <Route path="products/new" element={<ProductForm />} />
               <Route path="products/edit/:id" element={<ProductForm />} />
+              <Route path="orders" element={<Orders />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />

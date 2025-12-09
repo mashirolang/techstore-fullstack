@@ -45,7 +45,7 @@ const ProductCard = ({ product }) => {
 
       <CardFooter className="p-4 pt-0 flex items-center justify-between">
         <span className="text-2xl font-bold text-primary">
-          ${product.price.toFixed(2)}
+          ${Number(product.price).toFixed(2)}
         </span>
         <Button
           size="sm"
