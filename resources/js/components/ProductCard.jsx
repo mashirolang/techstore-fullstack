@@ -1,12 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Star } from "lucide-react";
 import { Button } from "@/components/Button";
 import { Card, CardContent, CardFooter } from "@/components/Card";
 import { Badge } from "@/components/Badge";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <Card className="group overflow-hidden hover:shadow-elegant transition-all duration-300">
@@ -51,6 +54,10 @@ const ProductCard = ({ product }) => {
           size="sm"
           onClick={(e) => {
             e.preventDefault();
+            if (!user) {
+              navigate('/login');
+              return;
+            }
             addToCart(product);
           }}
           disabled={product.stock === 0 && !product.inStock}

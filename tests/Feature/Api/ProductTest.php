@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+use Laravel\Sanctum\Sanctum;
+
 class ProductTest extends TestCase
 {
     use RefreshDatabase;
@@ -33,7 +35,10 @@ class ProductTest extends TestCase
 
     public function test_can_create_product()
     {
-        // Assuming we need auth or just open for this demo (controller didn't enforce auth)
+        $user = User::factory()->create(['is_admin' => true]);
+        
+        Sanctum::actingAs($user, ['*']);
+
         $data = [
             'name' => 'New Product',
             'price' => 99.99,
