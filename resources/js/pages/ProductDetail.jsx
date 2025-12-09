@@ -1,16 +1,37 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, ShoppingCart, Star, Check } from "lucide-react";
+import { ArrowLeft, ShoppingCart, Star, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/Button";
 import { Badge } from "@/components/Badge";
-import { products } from "@/data/products";
 import { useCart } from "@/context/CartContext";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "sonner";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const { addToCart } = useCart();
-  const product = products.find((p) => p.id === Number(id));
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  if (!product) {
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await axios.get(`/api/products/${id}`);
+        setProduct(response.data);
+      } catch (err) {
+        console.error("Failed to fetch product", err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [id]);
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
+
+  if (error || !product) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -37,7 +58,7 @@ const ProductDetail = () => {
           {/* Image */}
           <div className="aspect-square rounded-lg overflow-hidden bg-muted">
             <img
-              src={product.image}
+              src={product.image_url || product.image}
               alt={product.name}
               className="w-full h-full object-cover"
             />
@@ -48,19 +69,18 @@ const ProductDetail = () => {
             <Badge variant="secondary" className="w-fit mb-4">
               {product.category}
             </Badge>
-            
+
             <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
-            
+
             <div className="flex items-center gap-2 mb-6">
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`h-5 w-5 ${
-                      i < Math.floor(product.rating)
+                    className={`h-5 w-5 ${i < Math.floor(product.rating || 0)
                         ? "fill-yellow-400 text-yellow-400"
                         : "text-muted"
-                    }`}
+                      }`}
                   />
                 ))}
               </div>
@@ -68,7 +88,7 @@ const ProductDetail = () => {
             </div>
 
             <div className="text-4xl font-bold text-primary mb-6">
-              ${product.price.toFixed(2)}
+              ${Number(product.price).toFixed(2)}
             </div>
 
             <p className="text-muted-foreground text-lg mb-8">
@@ -95,14 +115,14 @@ const ProductDetail = () => {
                 size="lg"
                 className="flex-1 gap-2"
                 onClick={() => addToCart(product)}
-                disabled={!product.inStock}
+                disabled={product.stock === 0 && !product.inStock}
               >
                 <ShoppingCart className="h-5 w-5" />
-                {product.inStock ? "Add to Cart" : "Out of Stock"}
+                {(product.stock > 0 || product.inStock) ? "Add to Cart" : "Out of Stock"}
               </Button>
             </div>
 
-            {!product.inStock && (
+            {(product.stock === 0 && !product.inStock) && (
               <p className="text-destructive text-sm mt-4">
                 This item is currently out of stock
               </p>
