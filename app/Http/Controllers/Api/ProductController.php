@@ -26,6 +26,8 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'image_url' => 'nullable|url',
+            'category' => 'nullable|string',
+            'rating' => 'nullable|numeric|min:0|max:5',
         ]);
 
         $product = Product::create($validated);
@@ -41,6 +43,8 @@ class ProductController extends Controller
             'price' => 'numeric|min:0',
             'stock' => 'integer|min:0',
             'image_url' => 'nullable|url',
+            'category' => 'nullable|string',
+            'rating' => 'nullable|numeric|min:0|max:5',
         ]);
 
         $product->update($validated);

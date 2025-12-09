@@ -1,22 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import ProductCard from "@/components/ProductCard";
-import { products } from "@/data/products";
 import { Input } from "@/components/Input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Select";
-import { Search } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const Products = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  const categories = ["all", ...new Set(products.map((p) => p.category))];
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get('/api/products');
+      setProducts(response.data);
+    } catch (error) {
+      toast.error("Failed to load products");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const categories = ["all", ...new Set(products.map((p) => p.category).filter(Boolean))];
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchQuery.toLowerCase());
+      (product.description && product.description.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
 
   return (
     <div className="min-h-screen py-12">
