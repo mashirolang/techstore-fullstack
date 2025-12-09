@@ -37,6 +37,8 @@ Route::middleware('auth:web')->group(function () {
 
 // Admin Product Routes
 Route::middleware(['auth:web', 'admin'])->group(function () {
+    Route::get('/api/admin/stats', [App\Http\Controllers\Api\DashboardController::class, 'index']);
+    Route::get('/api/admin/orders', [OrderController::class, 'indexAdmin']);
     Route::post('/api/products', [ProductController::class, 'store']);
     Route::put('/api/products/{product}', [ProductController::class, 'update']);
     Route::delete('/api/products/{product}', [ProductController::class, 'destroy']);

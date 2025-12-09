@@ -28,7 +28,15 @@ class OrderController extends Controller
             return response()->json(['message' => 'Cart is empty'], 400);
         }
 
-        return DB::transaction(function () use ($user, $cart) {
+        // Validate shipping details
+        $validated = $request->validate([
+            'shipping_address' => 'required|string',
+            'shipping_city' => 'required|string',
+            'shipping_zip' => 'required|string',
+            'shipping_country' => 'required|string',
+        ]);
+
+        return DB::transaction(function () use ($user, $cart, $validated) {
             $total = $cart->items->sum(function ($item) {
                 return $item->quantity * $item->product->price;
             });
@@ -37,6 +45,10 @@ class OrderController extends Controller
                 'user_id' => $user->id,
                 'total_amount' => $total,
                 'status' => 'pending',
+                'shipping_address' => $validated['shipping_address'],
+                'shipping_city' => $validated['shipping_city'],
+                'shipping_zip' => $validated['shipping_zip'],
+                'shipping_country' => $validated['shipping_country'],
             ]);
 
             foreach ($cart->items as $item) {
@@ -54,5 +66,13 @@ class OrderController extends Controller
 
             return response()->json($order->load('items'), 201);
         });
+    }
+
+    public function indexAdmin()
+    {
+
+        return Order::with(['user', 'items.product'])
+            ->latest()
+            ->get();
     }
 }

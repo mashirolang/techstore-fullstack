@@ -41,7 +41,7 @@ const Cart = () => {
                       className="w-24 h-24 object-cover rounded-lg"
                     />
                   </Link>
-                  
+
                   <div className="flex-1">
                     <Link to={`/product/${item.id}`}>
                       <h3 className="font-semibold text-lg mb-1 hover:text-primary transition-colors">
@@ -49,7 +49,7 @@ const Cart = () => {
                       </h3>
                     </Link>
                     <p className="text-sm text-muted-foreground mb-2">{item.category}</p>
-                    <p className="font-bold text-primary">${item.price.toFixed(2)}</p>
+                    <p className="font-bold text-primary">${Number(item.price).toFixed(2)}</p>
                   </div>
 
                   <div className="flex flex-col items-end justify-between">
@@ -88,7 +88,7 @@ const Cart = () => {
           <div className="lg:col-span-1">
             <Card className="p-6 sticky top-24">
               <h2 className="text-xl font-bold mb-4">Order Summary</h2>
-              
+
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between text-muted-foreground">
                   <span>Subtotal</span>
