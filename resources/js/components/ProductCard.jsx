@@ -13,18 +13,18 @@ const ProductCard = ({ product }) => {
       <Link to={`/product/${product.id}`}>
         <div className="relative aspect-square overflow-hidden bg-muted">
           <img
-            src={product.image}
+            src={product.image_url || product.image}
             alt={product.name}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
-          {!product.inStock && (
+          {(product.stock === 0 && !product.inStock) && (
             <Badge className="absolute top-2 right-2" variant="destructive">
               Out of Stock
             </Badge>
           )}
         </div>
       </Link>
-      
+
       <CardContent className="p-4">
         <Link to={`/product/${product.id}`}>
           <Badge variant="secondary" className="mb-2">
@@ -53,7 +53,7 @@ const ProductCard = ({ product }) => {
             e.preventDefault();
             addToCart(product);
           }}
-          disabled={!product.inStock}
+          disabled={product.stock === 0 && !product.inStock}
           className="gap-2"
         >
           <ShoppingCart className="h-4 w-4" />

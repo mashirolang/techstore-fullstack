@@ -1,10 +1,18 @@
-import { Link } from "react-router-dom";
-import { ShoppingCart, Store } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ShoppingCart, Store, User, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/Button";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 
 const Navbar = () => {
   const { totalItems } = useCart();
+  const { user, logout, isAdmin } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
+  };
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -22,19 +30,45 @@ const Navbar = () => {
             <Link to="/products" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
               Products
             </Link>
+            {isAdmin && (
+              <Link to="/admin" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors flex items-center gap-1">
+                <LayoutDashboard className="h-4 w-4" />
+                Admin
+              </Link>
+            )}
           </div>
 
-          <Link to="/cart">
-            <Button variant="outline" size="sm" className="relative">
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Cart
-              {totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
-                  {totalItems}
-                </span>
-              )}
-            </Button>
-          </Link>
+          <div className="flex items-center gap-4">
+            {user ? (
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium hidden sm:block">Hello, {user.name}</span>
+                <Button variant="ghost" size="sm" onClick={handleLogout} title="Logout">
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link to="/login">
+                  <Button variant="ghost" size="sm">Login</Button>
+                </Link>
+                <Link to="/signup">
+                  <Button variant="default" size="sm">Signup</Button>
+                </Link>
+              </div>
+            )}
+
+            <Link to="/cart">
+              <Button variant="outline" size="sm" className="relative">
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Cart
+                {totalItems > 0 && (
+                  <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </nav>
