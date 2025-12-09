@@ -21,18 +21,21 @@ Route::middleware('auth:web')->get('/api/user', function (Illuminate\Http\Reques
 Route::get('/api/products', [ProductController::class, 'index']);
 Route::get('/api/products/{product}', [ProductController::class, 'show']);
 
-// Cart Routes
-Route::prefix('api/cart')->group(function () {
-    Route::get('/', [CartController::class, 'index']);
-    Route::post('/', [CartController::class, 'store']);
-    Route::put('/{cartItem}', [CartController::class, 'update']);
-    Route::delete('/{cartItem}', [CartController::class, 'destroy']);
-});
 
-// Protected Order Routes
+
+// Protected Order & Cart Routes
 Route::middleware('auth:web')->group(function () {
+    // Orders
     Route::get('/api/orders', [OrderController::class, 'index']);
     Route::post('/api/orders', [OrderController::class, 'store']);
+
+    // Cart
+    Route::prefix('api/cart')->group(function () {
+        Route::get('/', [CartController::class, 'index']);
+        Route::post('/', [CartController::class, 'store']);
+        Route::put('/{cartItem}', [CartController::class, 'update']);
+        Route::delete('/{cartItem}', [CartController::class, 'destroy']);
+    });
 });
 
 // Admin Product Routes

@@ -1,15 +1,18 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, ShoppingCart, Star, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/Button";
 import { Badge } from "@/components/Badge";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { user } = useAuth();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -78,8 +81,8 @@ const ProductDetail = () => {
                   <Star
                     key={i}
                     className={`h-5 w-5 ${i < Math.floor(product.rating || 0)
-                        ? "fill-yellow-400 text-yellow-400"
-                        : "text-muted"
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "text-muted"
                       }`}
                   />
                 ))}
@@ -114,7 +117,13 @@ const ProductDetail = () => {
               <Button
                 size="lg"
                 className="flex-1 gap-2"
-                onClick={() => addToCart(product)}
+                onClick={() => {
+                  if (!user) {
+                    navigate('/login');
+                    return;
+                  }
+                  addToCart(product);
+                }}
                 disabled={product.stock === 0 && !product.inStock}
               >
                 <ShoppingCart className="h-5 w-5" />

@@ -11,15 +11,17 @@ class CartTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_can_add_item_to_cart_as_guest()
+    public function test_can_add_item_to_cart_as_user()
     {
+        $user = \App\Models\User::factory()->create();
         $product = Product::factory()->create();
-        $sessionId = 'test-session-id';
+        
+        \Laravel\Sanctum\Sanctum::actingAs($user, ['*']);
 
         $response = $this->postJson('/api/cart', [
             'product_id' => $product->id,
             'quantity' => 1,
-        ], ['X-Session-ID' => $sessionId]);
+        ]);
 
         $response->assertStatus(201);
         
@@ -29,7 +31,7 @@ class CartTest extends TestCase
         ]);
         
         $this->assertDatabaseHas('carts', [
-            'session_id' => $sessionId,
+            'user_id' => $user->id,
         ]);
     }
 }
