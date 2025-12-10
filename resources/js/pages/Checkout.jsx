@@ -186,7 +186,14 @@ const Checkout = () => {
             <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
             <div className="space-y-4 max-h-96 overflow-y-auto mb-6">
               {cartItems.map((item) => (
-                <div key={item.id} className="flex justify-between items-center border-b pb-2">
+                <div key={item.id} className="flex gap-4 items-center border-b pb-4 mb-4 last:border-0 last:mb-0 last:pb-0">
+                  <div className="w-16 h-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                    <img
+                      src={item.image_url || item.image}
+                      alt={item.name}
+                      className="h-full w-full object-cover object-center"
+                    />
+                  </div>
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">{item.name}</p>
                     <p className="text-sm text-gray-500">Qty: {item.quantity}</p>

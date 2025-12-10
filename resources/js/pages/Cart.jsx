@@ -36,7 +36,7 @@ const Cart = () => {
                 <div className="flex gap-4">
                   <Link to={`/product/${item.id}`}>
                     <img
-                      src={item.image}
+                      src={item.image_url || item.image}
                       alt={item.name}
                       className="w-24 h-24 object-cover rounded-lg"
                     />
